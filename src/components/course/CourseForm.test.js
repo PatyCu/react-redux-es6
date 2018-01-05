@@ -1,30 +1,34 @@
 import expect from 'expect';
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import {mount, shallow} from 'enzyme';
 import CourseForm from './CourseForm';
 
-function setup() {
-    let props = {
-        course: {}, 
-        saving: false,
+function setup(saving) {
+    const props = {
+        course: {},
+        saving: saving,
         errors: {},
         onSave: () => {},
-        onChange: () => {}        
+        onChange: () => {}
     };
 
-    let renderer = TestUtils.createRenderer();
-    renderer.render(<CourseForm {...props} />);
-    let output = renderer.getRenderOutput();
-
-    return {
-        props,
-        output,
-        renderer
-    };
+    return shallow(<CourseForm {...props} />);
 }
 
-describe('CourseForm via React Test Utils', () => {
-    it('renders form and h1', () => {
+describe('CourseForm via Enzyme.', () => {
+    it('Renders form and h1', () => {
+        const wrapper = setup(false);
+        expect(wrapper.find('form').length).toBe(1);
+        expect(wrapper.find('h1').text()).toEqual('Manage Course');
+    });
 
-    }); 
+    it('Save button is labeled "Save" when not saving', () => {
+        const wrapper = setup(false);
+        expect(wrapper.find('input').props().value).toBe('Save');
+    });
+
+    it('Save button is labeled "Saving..." when saving', () => {
+        const wrapper = setup(true);
+        expect(wrapper.find('input').props().value).toBe('Saving...');
+    });
 });
